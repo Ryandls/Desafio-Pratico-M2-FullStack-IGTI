@@ -3,6 +3,7 @@ import { promises as fs, writeFile } from 'fs';
 
 const router = express.Router();
 
+//POST add Grades.
 router.post('/', async (req, res) => {
   let grade = req.body;
   try {
@@ -11,7 +12,7 @@ router.post('/', async (req, res) => {
     grade = { id: json.nextId++, timestamp: new Date(), ...grade };
     json.grades.push(grade);
 
-    await fs.writeFile(global.fileName, JSON.stringify(json));
+    await fs.writeFile(global.jsonGrades, JSON.stringify(json));
 
     res.send(grade);
   } catch (err) {
@@ -19,6 +20,7 @@ router.post('/', async (req, res) => {
   }
 });
 
+//PUT update Grades.
 router.put('/', async (req, res) => {
   try {
     let newInfo = req.body;
@@ -48,6 +50,7 @@ router.put('/', async (req, res) => {
   }
 });
 
+//Delete remove Grades
 router.delete('/:id', async (req, res) => {
   try {
     const json = JSON.parse(await fs.readFile(global.jsonGrades, 'utf-8'));
@@ -69,6 +72,7 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+//GET Grades by id.
 router.get('/:id', async (req, res) => {
   try {
     let json = JSON.parse(await fs.readFile(global.jsonGrades, 'utf-8'));
@@ -86,6 +90,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+//POST and sum Grades with two props.
 router.post('/allGrades', async (req, res) => {
   try {
     const json = JSON.parse(await fs.readFile(global.jsonGrades, 'utf-8'));
