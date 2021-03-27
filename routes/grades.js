@@ -130,5 +130,27 @@ router.get('/avgGrades/:subject/:type', async (req, res) => {
     res.status(400).send({ error: err.message });
   }
 });
+//POST best 3 Grades.
+router.post('/goodGrades', async (req, res) => {
+  try {
+    const json = JSON.parse(await fs.readFile(global.jsonGrades, 'utf-8'));
+    const grades = json.grades.filter(
+      (grade) =>
+        grade.type === req.body.type && grade.subject === req.body.subject
+    );
+    if (!grades.length) {
+      throw new Error('Parâmetros sem registros ou não existentes.');
+    }
+
+    grades.sort((a, b) => {
+      if (a.value < b.value) return 1;
+      else if (a.value > b.value) return -1;
+      else return 0;
+    });
+    res.send(grades.slice(0, 3));
+  } catch (err) {
+    res.status(400).send({ error: err.message });
+  }
+});
 
 export default router;
