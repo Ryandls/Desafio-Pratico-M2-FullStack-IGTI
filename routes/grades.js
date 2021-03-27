@@ -100,10 +100,32 @@ router.post('/allGrades', async (req, res) => {
         grade.student === req.body.student && grade.subject === req.body.subject
     );
 
-    let total = grades.reduce((acc, curr) => {
+    let all = grades.reduce((acc, curr) => {
       return acc + curr.value;
     }, 0);
-    console.log(total);
+    res.send({ all });
+  } catch (err) {
+    res.status(400).send({ error: err.message });
+  }
+});
+
+//GET average Grades by params
+router.get('/avgGrades/:subject/:type', async (req, res) => {
+  try {
+    const json = JSON.parse(await fs.readFile(global.jsonGrades, 'utf-8'));
+
+    const grades = json.grades.filter(
+      (grade) =>
+        grade.type === req.params.type && grade.subject === req.params.subject
+    );
+    if (!grades.length) {
+      throw new Error('Parâmetros sem registros ou não existentes.');
+    }
+    let all = grades.reduce((acc, curr) => {
+      return acc + curr.value;
+    }, 0);
+
+    res.send({ avg: all / grades.length });
   } catch (err) {
     res.status(400).send({ error: err.message });
   }
